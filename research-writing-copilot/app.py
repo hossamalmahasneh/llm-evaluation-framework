@@ -76,6 +76,16 @@ input::placeholder,textarea::placeholder {{color:{t['placeholder']}!important;-w
 [data-baseweb="tab"][aria-selected="true"] {{background:{button_bg}!important;color:{selected_fg}!important;}}
 [data-baseweb="tab"][aria-selected="true"] * {{color:{selected_fg}!important;}}
 [data-testid="stAlert"] {{border-radius:10px;}}
+/* Streamlit widget labels, including nested Markdown, are always readable. */
+[data-testid="stWidgetLabel"],[data-testid="stWidgetLabel"] *,
+[data-testid="stMarkdownContainer"],[data-testid="stMarkdownContainer"] *,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] *,
+[data-testid="stFileUploader"] *, [data-testid="stSelectbox"] label *,
+[data-testid="stTextInput"] label *,[data-testid="stTextArea"] label * {{
+ color:{t['text']}!important;opacity:1!important;
+}}
+[data-testid="stWidgetLabel"] {{font-weight:600!important;}}
+[data-testid="stCaptionContainer"],[data-testid="stCaptionContainer"] * {{color:{t['muted']}!important;opacity:1!important;}}
 hr {{border-color:{t['line']}!important;}}
 </style>""", unsafe_allow_html=True)
 
@@ -89,7 +99,7 @@ if 'review' not in st.session_state:
 p = st.session_state.project
 theme_col, spacer_col = st.columns([1, 3])
 with theme_col:
-    st.selectbox('Appearance', list(THEMES), key='ui_theme', help='Choose a readable theme. Your manuscript content is unaffected.')
+    st.selectbox('🎨 Appearance / Theme', list(THEMES), key='ui_theme', help='Choose a readable theme. Your manuscript content is unaffected.')
 st.title('✦ Research Writing Copilot')
 st.caption('Bilingual academic drafting • Strict author style profile • Bibliography key checks • Version history • Local-first project files')
 
