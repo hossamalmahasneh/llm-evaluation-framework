@@ -1,5 +1,6 @@
 """Streamlit UI. Run: streamlit run app.py"""
 import os
+from pathlib import Path
 from io import BytesIO
 import streamlit as st
 from dotenv import load_dotenv
@@ -31,7 +32,7 @@ if 'review' not in st.session_state:
 
 p = st.session_state.project
 st.title('✦ Research Writing Copilot')
-st.caption('Bilingual academic drafting • Author-grounded content • Bibliography key checks • Version history • Local-first project files')
+st.caption('Bilingual academic drafting • Strict author style profile • Bibliography key checks • Version history • Local-first project files')
 
 with st.sidebar:
     st.subheader('Model settings')
@@ -58,7 +59,9 @@ def call_model(instructions: str, text: str) -> str:
     if not api_key.strip():
         raise ValueError('Supply an OpenAI API key in the sidebar.')
     client = OpenAI(api_key=api_key.strip(), timeout=90.0, max_retries=2)
-    response = client.responses.create(model=model.strip(), instructions=instructions, input=text, store=False)
+    profile_path = Path(__file__).with_name('AUTHOR_STYLE_PROFILE.md')
+    profile = profile_path.read_text(encoding='utf-8') if profile_path.exists() else ''
+    response = client.responses.create(model=model.strip(), instructions=instructions + '\n\nAUTHOR STYLE GUIDANCE:\n' + profile, input=text, store=False)
     if not response.output_text.strip():
         raise RuntimeError('Model returned no plain text. Check model ID and API access.')
     return response.output_text.strip()
