@@ -15,25 +15,67 @@ from core import (
 load_dotenv()
 st.set_page_config(page_title='Research Writing Copilot', page_icon='✦', layout='wide')
 st.markdown('''<style>
-/* Light canvas, legible dark content, white text on accent controls. */
-.stApp {background:linear-gradient(135deg,#ffffff 0%,#f6f8fc 55%,#edf3fb 100%);color:#18263a;}
-[data-testid="stSidebar"] {background:#eef3f9;border-right:1px solid #dbe3ef;}
-[data-testid="stSidebar"] * {color:#1b2c43;}
-h1,h2,h3 {color:#17385d!important;}
-p, label, .stMarkdown, [data-testid="stCaptionContainer"] {color:#25384e;}
-.stButton>button[kind="primary"], .stDownloadButton>button {
-  background:#214e7c!important;color:#ffffff!important;border:1px solid #214e7c!important;font-weight:700;
+/* Research Writing Copilot — accessible editorial workspace.
+   Native Streamlit light theme controls widget text; CSS only adds visual hierarchy. */
+:root {color-scheme:light;}
+html, body, [data-testid="stAppViewContainer"], .stApp {
+  background:#F6F8FC!important; color:#172B46!important;
+  font-family:Inter, "Segoe UI", Arial, sans-serif;
 }
-.stButton>button[kind="primary"] *, .stDownloadButton>button * {color:#ffffff!important;}
-.stButton>button:not([kind="primary"]) {background:#ffffff;color:#214e7c;border:1px solid #b8cbe1;}
-.stButton>button:not([kind="primary"]) * {color:#214e7c;}
-[data-testid="stMetricValue"] {color:#214e7c;}
-[data-testid="stMetric"] {background:#ffffff;border:1px solid #dbe3ef;border-radius:12px;padding:12px;}
-[data-baseweb="tab-list"] {background:#edf3f9;border-radius:10px;}
-[data-baseweb="tab"] {color:#214e7c;}
-[data-baseweb="tab"][aria-selected="true"] {background:#214e7c;color:#ffffff;border-radius:8px;}
-[data-baseweb="tab"][aria-selected="true"] * {color:#ffffff!important;}
-input, textarea, [data-baseweb="select"]>div {background:#ffffff!important;color:#18263a!important;}
+[data-testid="stHeader"] {background:rgba(246,248,252,.96)!important;}
+[data-testid="stMainBlockContainer"] {max-width:1280px;padding-top:2rem;padding-bottom:4rem;}
+[data-testid="stSidebar"], [data-testid="stSidebarContent"] {
+  background:#FFFFFF!important;border-right:1px solid #DFE7F1;
+}
+h1,h2,h3,h4 {color:#142D4B!important;letter-spacing:-.025em;}
+h1 {font-size:2.1rem!important;font-weight:760!important;}
+h2,h3 {font-weight:700!important;}
+p,li, label, .stMarkdown, [data-testid="stCaptionContainer"],
+[data-testid="stWidgetLabel"], [data-testid="stMetricLabel"] {color:#31445D!important;}
+[data-testid="stCaptionContainer"] {color:#60718A!important;}
+/* Ensure inputs, textareas, select controls and placeholder text are never white-on-white. */
+.stTextInput input, .stTextArea textarea, input, textarea,
+[data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
+  background:#FFFFFF!important;color:#142D4B!important;
+  -webkit-text-fill-color:#142D4B!important;
+  caret-color:#245B93!important;border-radius:9px!important;
+}
+input::placeholder, textarea::placeholder {
+  color:#77869A!important;-webkit-text-fill-color:#77869A!important;opacity:1!important;
+}
+[data-baseweb="input"], [data-baseweb="textarea"], [data-baseweb="select"]>div {
+  background:#FFFFFF!important;color:#142D4B!important;
+  border-color:#B9C9DB!important;border-radius:9px!important;
+}
+[data-baseweb="select"] input, [data-baseweb="select"] span,
+[data-baseweb="select"] [role="combobox"] {color:#142D4B!important;-webkit-text-fill-color:#142D4B!important;}
+[data-baseweb="popover"], [role="listbox"], [role="option"] {background:#FFFFFF!important;color:#142D4B!important;}
+[role="option"]:hover {background:#EAF2FB!important;}
+[data-baseweb="input"]:focus-within, [data-baseweb="textarea"]:focus-within,
+[data-baseweb="select"]:focus-within {border-color:#245B93!important;box-shadow:0 0 0 2px #D7E7F8!important;}
+/* Crisp white typography only on blue accent surfaces. */
+.stButton>button[kind="primary"], .stDownloadButton>button {
+  background:#245B93!important;color:#FFFFFF!important;border:1px solid #245B93!important;
+  border-radius:9px!important;font-weight:650!important;min-height:2.6rem;
+}
+.stButton>button[kind="primary"] *, .stDownloadButton>button * {color:#FFFFFF!important;}
+.stButton>button:not([kind="primary"]) {
+  background:#FFFFFF!important;color:#245B93!important;border:1px solid #B9C9DB!important;
+  border-radius:9px!important;font-weight:600!important;min-height:2.6rem;
+}
+.stButton>button:not([kind="primary"]) * {color:#245B93!important;}
+.stButton>button:hover,.stDownloadButton>button:hover {box-shadow:0 3px 12px rgba(24,58,93,.12);}
+[data-testid="stMetric"] {background:#FFFFFF;border:1px solid #DFE7F1;border-radius:12px;padding:14px 18px;}
+[data-testid="stMetricValue"] {color:#245B93!important;font-weight:750;}
+[data-baseweb="tab-list"] {background:#EAF0F7!important;padding:5px;border-radius:11px;gap:5px;}
+[data-baseweb="tab"] {background:transparent!important;color:#38516C!important;border-radius:8px!important;padding:10px 15px;}
+[data-baseweb="tab"] * {color:#38516C!important;}
+[data-baseweb="tab"][aria-selected="true"] {background:#245B93!important;color:#FFFFFF!important;}
+[data-baseweb="tab"][aria-selected="true"] * {color:#FFFFFF!important;}
+[data-testid="stFileUploader"] {background:#FFFFFF;border-radius:12px;}
+[data-testid="stExpander"] {background:#FFFFFF;border:1px solid #DFE7F1;border-radius:10px;}
+[data-testid="stAlert"] {border-radius:10px;}
+hr {border-color:#DFE7F1!important;}
 </style>''', unsafe_allow_html=True)
 
 if 'project' not in st.session_state:
