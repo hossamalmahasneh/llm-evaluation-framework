@@ -14,69 +14,70 @@ from core import (
 
 load_dotenv()
 st.set_page_config(page_title='Research Writing Copilot', page_icon='✦', layout='wide')
-st.markdown('''<style>
-/* Research Writing Copilot — accessible editorial workspace.
-   Native Streamlit light theme controls widget text; CSS only adds visual hierarchy. */
-:root {color-scheme:light;}
-html, body, [data-testid="stAppViewContainer"], .stApp {
-  background:#F6F8FC!important; color:#172B46!important;
-  font-family:Inter, "Segoe UI", Arial, sans-serif;
+THEMES = {
+    'Light': dict(bg='#F6F8FC', panel='#FFFFFF', text='#172B46', muted='#52647A', accent='#245B93', line='#C8D5E5', soft='#EAF0F7', placeholder='#748399'),
+    'Dark': dict(bg='#101827', panel='#1B2940', text='#F2F6FC', muted='#C4D0E0', accent='#77B7F8', line='#40516B', soft='#263A56', placeholder='#A8B8CB'),
+    'High Contrast': dict(bg='#FFFFFF', panel='#FFFFFF', text='#111111', muted='#222222', accent='#073B80', line='#222222', soft='#E8EFFA', placeholder='#444444'),
 }
-[data-testid="stHeader"] {background:rgba(246,248,252,.96)!important;}
-[data-testid="stMainBlockContainer"] {max-width:1280px;padding-top:2rem;padding-bottom:4rem;}
-[data-testid="stSidebar"], [data-testid="stSidebarContent"] {
-  background:#FFFFFF!important;border-right:1px solid #DFE7F1;
-}
-h1,h2,h3,h4 {color:#142D4B!important;letter-spacing:-.025em;}
-h1 {font-size:2.1rem!important;font-weight:760!important;}
-h2,h3 {font-weight:700!important;}
-p,li, label, .stMarkdown, [data-testid="stCaptionContainer"],
-[data-testid="stWidgetLabel"], [data-testid="stMetricLabel"] {color:#31445D!important;}
-[data-testid="stCaptionContainer"] {color:#60718A!important;}
-/* Ensure inputs, textareas, select controls and placeholder text are never white-on-white. */
-.stTextInput input, .stTextArea textarea, input, textarea,
-[data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
-  background:#FFFFFF!important;color:#142D4B!important;
-  -webkit-text-fill-color:#142D4B!important;
-  caret-color:#245B93!important;border-radius:9px!important;
-}
-input::placeholder, textarea::placeholder {
-  color:#77869A!important;-webkit-text-fill-color:#77869A!important;opacity:1!important;
-}
-[data-baseweb="input"], [data-baseweb="textarea"], [data-baseweb="select"]>div {
-  background:#FFFFFF!important;color:#142D4B!important;
-  border-color:#B9C9DB!important;border-radius:9px!important;
-}
-[data-baseweb="select"] input, [data-baseweb="select"] span,
-[data-baseweb="select"] [role="combobox"] {color:#142D4B!important;-webkit-text-fill-color:#142D4B!important;}
-[data-baseweb="popover"], [role="listbox"], [role="option"] {background:#FFFFFF!important;color:#142D4B!important;}
-[role="option"]:hover {background:#EAF2FB!important;}
-[data-baseweb="input"]:focus-within, [data-baseweb="textarea"]:focus-within,
-[data-baseweb="select"]:focus-within {border-color:#245B93!important;box-shadow:0 0 0 2px #D7E7F8!important;}
-/* Crisp white typography only on blue accent surfaces. */
-.stButton>button[kind="primary"], .stDownloadButton>button {
-  background:#245B93!important;color:#FFFFFF!important;border:1px solid #245B93!important;
-  border-radius:9px!important;font-weight:650!important;min-height:2.6rem;
-}
-.stButton>button[kind="primary"] *, .stDownloadButton>button * {color:#FFFFFF!important;}
-.stButton>button:not([kind="primary"]) {
-  background:#FFFFFF!important;color:#245B93!important;border:1px solid #B9C9DB!important;
-  border-radius:9px!important;font-weight:600!important;min-height:2.6rem;
-}
-.stButton>button:not([kind="primary"]) * {color:#245B93!important;}
-.stButton>button:hover,.stDownloadButton>button:hover {box-shadow:0 3px 12px rgba(24,58,93,.12);}
-[data-testid="stMetric"] {background:#FFFFFF;border:1px solid #DFE7F1;border-radius:12px;padding:14px 18px;}
-[data-testid="stMetricValue"] {color:#245B93!important;font-weight:750;}
-[data-baseweb="tab-list"] {background:#EAF0F7!important;padding:5px;border-radius:11px;gap:5px;}
-[data-baseweb="tab"] {background:transparent!important;color:#38516C!important;border-radius:8px!important;padding:10px 15px;}
-[data-baseweb="tab"] * {color:#38516C!important;}
-[data-baseweb="tab"][aria-selected="true"] {background:#245B93!important;color:#FFFFFF!important;}
-[data-baseweb="tab"][aria-selected="true"] * {color:#FFFFFF!important;}
-[data-testid="stFileUploader"] {background:#FFFFFF;border-radius:12px;}
-[data-testid="stExpander"] {background:#FFFFFF;border:1px solid #DFE7F1;border-radius:10px;}
-[data-testid="stAlert"] {border-radius:10px;}
-hr {border-color:#DFE7F1!important;}
-</style>''', unsafe_allow_html=True)
+if 'ui_theme' not in st.session_state:
+    st.session_state.ui_theme = 'Light'
+theme = st.session_state.ui_theme
+t = THEMES[theme]
+button_bg = '#245B93' if theme == 'Light' else ('#073B80' if theme == 'High Contrast' else '#77B7F8')
+button_fg = '#FFFFFF' if theme != 'Dark' else '#101827'
+selected_fg = button_fg
+st.markdown(f"""<style>
+:root {{color-scheme:{'dark' if theme == 'Dark' else 'light'};}}
+html,body,.stApp,[data-testid="stAppViewContainer"] {{
+ background:{t['bg']}!important;color:{t['text']}!important;font-family:Inter,"Segoe UI",Arial,sans-serif;
+}}
+[data-testid="stHeader"] {{background:{t['bg']}!important;}}
+[data-testid="stMainBlockContainer"] {{max-width:1280px;padding-top:1.6rem;padding-bottom:4rem;}}
+[data-testid="stSidebar"],[data-testid="stSidebarContent"] {{background:{t['panel']}!important;border-right:1px solid {t['line']}!important;}}
+h1,h2,h3,h4,p,li,label,.stMarkdown,[data-testid="stWidgetLabel"],[data-testid="stMetricLabel"],
+[data-testid="stSidebar"] * {{color:{t['text']}!important;}}
+h1 {{font-size:2.1rem!important;font-weight:760!important;letter-spacing:-.025em;}}
+h2,h3 {{font-weight:700!important;letter-spacing:-.02em;}}
+[data-testid="stCaptionContainer"],[data-testid="stCaptionContainer"] * {{color:{t['muted']}!important;}}
+.stTextInput input,.stTextArea textarea,input,textarea,[data-baseweb="input"] input,[data-baseweb="textarea"] textarea {{
+ background:{t['panel']}!important;color:{t['text']}!important;-webkit-text-fill-color:{t['text']}!important;
+ caret-color:{t['accent']}!important;border-radius:9px!important;
+}}
+input::placeholder,textarea::placeholder {{color:{t['placeholder']}!important;-webkit-text-fill-color:{t['placeholder']}!important;opacity:1!important;}}
+[data-baseweb="input"],[data-baseweb="textarea"],[data-baseweb="select"]>div {{
+ background:{t['panel']}!important;color:{t['text']}!important;border-color:{t['line']}!important;border-radius:9px!important;
+}}
+[data-baseweb="select"] input,[data-baseweb="select"] span,[data-baseweb="select"] [role="combobox"] {{
+ color:{t['text']}!important;-webkit-text-fill-color:{t['text']}!important;
+}}
+[data-baseweb="popover"],[role="listbox"],[role="option"] {{background:{t['panel']}!important;color:{t['text']}!important;}}
+[role="option"]:hover {{background:{t['soft']}!important;}}
+[data-baseweb="input"]:focus-within,[data-baseweb="textarea"]:focus-within,[data-baseweb="select"]:focus-within {{
+ border-color:{t['accent']}!important;box-shadow:0 0 0 2px {t['soft']}!important;
+}}
+.stButton>button[kind="primary"],.stDownloadButton>button {{
+ background:{button_bg}!important;color:{button_fg}!important;border:1px solid {button_bg}!important;
+ border-radius:9px!important;font-weight:650!important;min-height:2.6rem;
+}}
+.stButton>button[kind="primary"] *,.stDownloadButton>button * {{color:{button_fg}!important;}}
+.stButton>button:not([kind="primary"]) {{
+ background:{t['panel']}!important;color:{t['text']}!important;border:1px solid {t['line']}!important;
+ border-radius:9px!important;font-weight:600!important;min-height:2.6rem;
+}}
+.stButton>button:not([kind="primary"]) * {{color:{t['text']}!important;}}
+[data-testid="stMetric"],[data-testid="stFileUploader"],[data-testid="stExpander"] {{
+ background:{t['panel']}!important;border:1px solid {t['line']}!important;border-radius:11px!important;
+}}
+[data-testid="stMetric"] {{padding:14px 18px;}}
+[data-testid="stMetricValue"] {{color:{t['accent']}!important;font-weight:750;}}
+[data-baseweb="tab-list"] {{background:{t['soft']}!important;padding:5px;border-radius:11px;gap:5px;}}
+[data-baseweb="tab"] {{background:transparent!important;color:{t['text']}!important;border-radius:8px!important;padding:10px 15px;}}
+[data-baseweb="tab"] * {{color:{t['text']}!important;}}
+[data-baseweb="tab"][aria-selected="true"] {{background:{button_bg}!important;color:{selected_fg}!important;}}
+[data-baseweb="tab"][aria-selected="true"] * {{color:{selected_fg}!important;}}
+[data-testid="stAlert"] {{border-radius:10px;}}
+hr {{border-color:{t['line']}!important;}}
+</style>""", unsafe_allow_html=True)
 
 if 'project' not in st.session_state:
     st.session_state.project = project_template()
@@ -86,6 +87,9 @@ if 'review' not in st.session_state:
     st.session_state.review = ''
 
 p = st.session_state.project
+theme_col, spacer_col = st.columns([1, 3])
+with theme_col:
+    st.selectbox('Appearance', list(THEMES), key='ui_theme', help='Choose a readable theme. Your manuscript content is unaffected.')
 st.title('✦ Research Writing Copilot')
 st.caption('Bilingual academic drafting • Strict author style profile • Bibliography key checks • Version history • Local-first project files')
 
