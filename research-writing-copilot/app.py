@@ -15,12 +15,25 @@ from core import (
 load_dotenv()
 st.set_page_config(page_title='Research Writing Copilot', page_icon='✦', layout='wide')
 st.markdown('''<style>
-.stApp {background:linear-gradient(125deg,#09182e,#111d35 65%,#18223a);color:#f7f5ef;}
-[data-testid="stSidebar"] {background:#0a172a;}
-h1,h2,h3 {color:#e6c781!important;}
-.stButton>button[kind="primary"] {background:#b99548;color:#08162b;border:0;font-weight:700;}
-.stButton>button {border-color:#b99548;}
-[data-testid="stMetricValue"] {color:#e6c781;}
+/* Light canvas, legible dark content, white text on accent controls. */
+.stApp {background:linear-gradient(135deg,#ffffff 0%,#f6f8fc 55%,#edf3fb 100%);color:#18263a;}
+[data-testid="stSidebar"] {background:#eef3f9;border-right:1px solid #dbe3ef;}
+[data-testid="stSidebar"] * {color:#1b2c43;}
+h1,h2,h3 {color:#17385d!important;}
+p, label, .stMarkdown, [data-testid="stCaptionContainer"] {color:#25384e;}
+.stButton>button[kind="primary"], .stDownloadButton>button {
+  background:#214e7c!important;color:#ffffff!important;border:1px solid #214e7c!important;font-weight:700;
+}
+.stButton>button[kind="primary"] *, .stDownloadButton>button * {color:#ffffff!important;}
+.stButton>button:not([kind="primary"]) {background:#ffffff;color:#214e7c;border:1px solid #b8cbe1;}
+.stButton>button:not([kind="primary"]) * {color:#214e7c;}
+[data-testid="stMetricValue"] {color:#214e7c;}
+[data-testid="stMetric"] {background:#ffffff;border:1px solid #dbe3ef;border-radius:12px;padding:12px;}
+[data-baseweb="tab-list"] {background:#edf3f9;border-radius:10px;}
+[data-baseweb="tab"] {color:#214e7c;}
+[data-baseweb="tab"][aria-selected="true"] {background:#214e7c;color:#ffffff;border-radius:8px;}
+[data-baseweb="tab"][aria-selected="true"] * {color:#ffffff!important;}
+input, textarea, [data-baseweb="select"]>div {background:#ffffff!important;color:#18263a!important;}
 </style>''', unsafe_allow_html=True)
 
 if 'project' not in st.session_state:
